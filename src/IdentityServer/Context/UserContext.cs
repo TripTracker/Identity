@@ -8,5 +8,8 @@ namespace IdentityServer.Context
         public UserContext(DbContextOptions<UserContext> options)
            : base(options)
         { }
+
+        public DbSet<TripTreckerUser> Users { get; set; }
+
     }
 }

@@ -31,7 +31,7 @@ namespace IdentityServer
         {
             services.AddDbContext<UserContext>(o => o.UseInMemoryDatabase("UsersStore"));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<TripTreckerUser, IdentityRole>()
                     .AddEntityFrameworkStores<UserContext>()
                     .AddDefaultTokenProviders();
 
@@ -47,7 +47,7 @@ namespace IdentityServer
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients)
                 .AddProfileService<GoogleProfileService>()
-                .AddDelegationGrant<IdentityUser, String>()   // Register the extension grant 
+                .AddDelegationGrant<TripTreckerUser, String>()   // Register the extension grant 
                 .AddDefaultSocialLoginValidators(); // Add google, facebook, twitter login support
 
             // not recommended for production - you need to store your key material somewhere secure
