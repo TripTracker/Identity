@@ -2,11 +2,15 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using IdentityServer.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace IdentityServer
 {
@@ -23,8 +27,10 @@ namespace IdentityServer
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // uncomment, if you want to add an MVC-based UI
-            //services.AddControllersWithViews();
+            services.AddDbContext<UserContext>(o => o.UseInMemoryDatabase("UsersStore"));
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                    .AddDefaultTokenProviders();
 
             var builder = services.AddIdentityServer(options =>
             {
@@ -34,7 +40,9 @@ namespace IdentityServer
             })
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryClients(Config.Clients);
+                .AddInMemoryClients(Config.Clients)
+                .AddDelegationGrant<IdentityUser, String>()   // Register the extension grant 
+                .AddDefaultSocialLoginValidators(); // Add google, facebook, twitter login support
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
