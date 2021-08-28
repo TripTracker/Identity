@@ -14,8 +14,11 @@ namespace IdentityServer
             new IdentityResource[]
             { 
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
-                new IdentityResources.Email()
+
+                new IdentityResource(
+                    name: "profile",
+                    userClaims: new[] { "sub", "email", "picture", "name" },
+                    displayName: "OpenID claims"),
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>

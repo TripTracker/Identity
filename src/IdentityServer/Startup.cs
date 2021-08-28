@@ -3,6 +3,7 @@
 
 
 using IdentityServer.Context;
+using IdentityServer.Profiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RestSharp;
 using System;
 
 namespace IdentityServer
@@ -30,7 +32,10 @@ namespace IdentityServer
             services.AddDbContext<UserContext>(o => o.UseInMemoryDatabase("UsersStore"));
 
             services.AddIdentity<IdentityUser, IdentityRole>()
+                    .AddEntityFrameworkStores<UserContext>()
                     .AddDefaultTokenProviders();
+
+            services.AddScoped<IRestClient, RestClient>();
 
             var builder = services.AddIdentityServer(options =>
             {
@@ -41,6 +46,7 @@ namespace IdentityServer
                 .AddInMemoryIdentityResources(Config.IdentityResources)
                 .AddInMemoryApiScopes(Config.ApiScopes)
                 .AddInMemoryClients(Config.Clients)
+                .AddProfileService<GoogleProfileService>()
                 .AddDelegationGrant<IdentityUser, String>()   // Register the extension grant 
                 .AddDefaultSocialLoginValidators(); // Add google, facebook, twitter login support
 
