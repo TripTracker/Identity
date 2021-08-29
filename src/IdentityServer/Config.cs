@@ -18,7 +18,7 @@ namespace IdentityServer
                 new IdentityResource(
                     name: "profile",
                     userClaims: new[] { "sub", "email", "picture", "name" },
-                    displayName: "OpenID claims"),
+                    displayName: "Profile claims"),
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>

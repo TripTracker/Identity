@@ -10,20 +10,23 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer.Context;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityServer.Profiles
 {
     public class GoogleProfileService : IProfileService
     {
-        private readonly ILogger<GoogleProfileService> _logger;
-        private readonly IRestClient _client;
-        private readonly UserManager<TripTreckerUser> _userManager;
+        private readonly ILogger<GoogleProfileService> Logger;
+        private readonly IConfiguration Configuration;
+        private readonly IRestClient Client;
+        private readonly UserManager<TripTreckerUser> UserManager;
 
-        public GoogleProfileService(ILogger<GoogleProfileService> logger, IRestClient client, UserManager<TripTreckerUser> userManager)
+        public GoogleProfileService(ILogger<GoogleProfileService> logger, IRestClient client, UserManager<TripTreckerUser> userManager, IConfiguration configuration)
         {
-            _logger = logger;
-            _client = client;
-            _userManager = userManager;
+            Logger = logger;
+            Client = client;
+            UserManager = userManager;
+            Configuration = configuration;
         }
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
@@ -50,7 +53,7 @@ namespace IdentityServer.Profiles
         {
             var userInfo = await GetGoogleUserInfo(googleToken);
 
-            context.AddRequestedClaims(new List<Claim>()
+            context.IssuedClaims.AddRange(new List<Claim>()
             {
                 new Claim("email", userInfo.Email),
                 new Claim("name", userInfo.Name),
@@ -59,21 +62,21 @@ namespace IdentityServer.Profiles
 
             var sub = context.Subject.GetSubjectId();
 
-            var user = await _userManager.FindByIdAsync(sub);
+            var user = await UserManager.FindByIdAsync(sub);
             user.Picture = userInfo.Picture;
             user.Name = userInfo.Name;
 
-            await _userManager.UpdateAsync(user);
+            await UserManager.UpdateAsync(user);
         }
 
         private async Task CheckForAndReturnExistingGoogleClaims(ProfileDataRequestContext context)
         {
             var sub = context.Subject.GetSubjectId();
-            var user = await _userManager.FindByIdAsync(sub);
+            var user = await UserManager.FindByIdAsync(sub);
 
             if (user != null)
             {
-                context.AddRequestedClaims(new List<Claim>()
+                context.IssuedClaims.AddRange(new List<Claim>()
                 {
                     new Claim("email", user.Email),
                     new Claim("name", user.Name),
@@ -87,16 +90,16 @@ namespace IdentityServer.Profiles
         {
             try
             {
-                _client.Authenticator = new JwtAuthenticator(token);
+                Client.Authenticator = new JwtAuthenticator(token);
 
-                var request = new RestRequest("https://www.googleapis.com/oauth2/v1/userinfo", DataFormat.Json);
-                var result = await _client.ExecuteAsync<UserProfile>(request);
+                var request = new RestRequest(Configuration["GOOGLE_USERINFOURL"], DataFormat.Json);
+                var result = await Client.ExecuteAsync<UserProfile>(request);
 
                 return result.Data;
             }
             catch (Exception ex)
             {
-                // TO DO LOGGING AND RETURN RESULT
+                Logger.LogError("Request to get google user info failed", ex);
                 throw ex;
             }
         }
