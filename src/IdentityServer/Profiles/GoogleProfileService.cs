@@ -57,16 +57,11 @@ namespace IdentityServer.Profiles
             {
                 new Claim("email", userInfo.Email),
                 new Claim("name", userInfo.Name),
-                new Claim("picture", userInfo.Picture)
+                new Claim("picture", userInfo.Picture),
+                new Claim(ClaimTypes.Name, userInfo.Email)
             });
 
-            var sub = context.Subject.GetSubjectId();
-
-            var user = await UserManager.FindByIdAsync(sub);
-            user.Picture = userInfo.Picture;
-            user.Name = userInfo.Name;
-
-            await UserManager.UpdateAsync(user);
+            await UpdateUserIdentityWithGoogleInfo(userInfo, context);
         }
 
         private async Task CheckForAndReturnExistingGoogleClaims(ProfileDataRequestContext context)
@@ -80,7 +75,8 @@ namespace IdentityServer.Profiles
                 {
                     new Claim("email", user.Email),
                     new Claim("name", user.Name),
-                    new Claim("picture", user.Picture)
+                    new Claim("picture", user.Picture),
+                    new Claim(ClaimTypes.Name, user.Email)
                 });
             }
         }
@@ -102,6 +98,17 @@ namespace IdentityServer.Profiles
                 Logger.LogError("Request to get google user info failed", ex);
                 throw ex;
             }
+        }
+
+        private async Task UpdateUserIdentityWithGoogleInfo(UserProfile userInfo, ProfileDataRequestContext context)
+        {
+            var sub = context.Subject.GetSubjectId();
+
+            var user = await UserManager.FindByIdAsync(sub);
+            user.Picture = userInfo.Picture;
+            user.Name = userInfo.Name;
+
+            await UserManager.UpdateAsync(user);
         }
     }
 }
