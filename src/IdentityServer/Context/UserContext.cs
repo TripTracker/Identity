@@ -10,6 +10,5 @@ namespace IdentityServer.Context
         { }
 
         public DbSet<TripTreckerUser> Users { get; set; }
-
     }
 }
