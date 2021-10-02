@@ -5,5 +5,6 @@
         public const string GRAPH = "graph";
         public const string TRIP_API = "trip-api";
         public const string LOCATION_API = "location-api";
+        public const string CONTENT_API = "content-api";
     }
 }

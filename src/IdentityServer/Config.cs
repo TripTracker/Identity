@@ -27,6 +27,7 @@ namespace IdentityServer
                 new ApiScope(ClientScopes.TRIP_API, "TripApi"),
                 new ApiScope(ClientScopes.LOCATION_API, "LocationApi"),
                 new ApiScope(ClientScopes.GRAPH, "Graph"),
+                new ApiScope(ClientScopes.CONTENT_API, "ContentApi"),
             };
 
         public static IEnumerable<Client> Clients =>
@@ -49,6 +50,45 @@ namespace IdentityServer
                     AllowedScopes = 
                     { 
                          ClientScopes.TRIP_API,
+                         ClientScopes.LOCATION_API,
+                         ClientScopes.CONTENT_API
+                    }
+                },
+                new Client
+                {
+                    ClientId = ServerClients.CONTENTAPI,
+
+                    // no interactive user, use the clientid/secret for authentication
+                    AllowedGrantTypes = GrantTypes.Code,
+
+                    // secret for authentication
+                    ClientSecrets =
+                    {
+                        new Secret("fake_secret".Sha256())
+                    },
+
+                    // scopes that client has access to
+                    AllowedScopes =
+                    {
+                         ClientScopes.TRIP_API
+                    }
+                },
+                new Client
+                {
+                    ClientId = ServerClients.TRIPAPI,
+
+                    // no interactive user, use the clientid/secret for authentication
+                    AllowedGrantTypes = GrantTypes.Code,
+
+                    // secret for authentication
+                    ClientSecrets =
+                    {
+                        new Secret("fake_secret".Sha256())
+                    },
+
+                    // scopes that client has access to
+                    AllowedScopes =
+                    {
                          ClientScopes.LOCATION_API
                     }
                 },
@@ -73,10 +113,10 @@ namespace IdentityServer
                          IdentityServerConstants.StandardScopes.Email,
                          ClientScopes.TRIP_API,
                          ClientScopes.LOCATION_API,
+                         ClientScopes.CONTENT_API,
                          ClientScopes.GRAPH
                     },
                 },
-
             };
     }
 }
