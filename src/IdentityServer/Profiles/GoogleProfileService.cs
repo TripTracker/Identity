@@ -56,7 +56,8 @@ namespace IdentityServer.Profiles
             context.IssuedClaims.AddRange(new List<Claim>()
             {
                 new Claim("email", userInfo.Email),
-                new Claim("name", userInfo.Name),
+                new Claim("firstName", userInfo.FirstName),
+                new Claim("lastName", userInfo.LastName),
                 new Claim("picture", userInfo.Picture),
                 new Claim(ClaimTypes.Name, userInfo.Email)
             });
@@ -74,14 +75,14 @@ namespace IdentityServer.Profiles
                 context.IssuedClaims.AddRange(new List<Claim>()
                 {
                     new Claim("email", user.Email),
-                    new Claim("name", user.Name),
+                    new Claim("firstName", user.FirstName),
+                    new Claim("lastName", user.LastName),
                     new Claim("picture", user.Picture),
                     new Claim(ClaimTypes.Name, user.Email)
                 });
             }
         }
 
-        // to do => clean this up during cleanup phase
         private async Task<UserProfile> GetGoogleUserInfo(string token)
         {
             try
@@ -106,7 +107,8 @@ namespace IdentityServer.Profiles
 
             var user = await UserManager.FindByIdAsync(sub);
             user.Picture = userInfo.Picture;
-            user.Name = userInfo.Name;
+            user.FirstName = userInfo.FirstName;
+            user.LastName = userInfo.LastName;
 
             await UserManager.UpdateAsync(user);
         }
