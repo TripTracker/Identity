@@ -94,7 +94,7 @@ namespace IdentityServer
                 },
                 new Client
                 {
-                    ClientId = ServerClients.VUE,
+                    ClientId = ServerClients.ANGULAR,
                     AllowedGrantTypes = new[] { "delegation" },
                     RequireClientSecret = false,
 

@@ -5,6 +5,6 @@
         public const string TRIPAPI = "tripapi";
         public const string GRAPH = "graph";
         public const string CONTENTAPI = "contentapi";
-        public const string VUE = "vue";
+        public const string ANGULAR = "angular";
     }
 }
