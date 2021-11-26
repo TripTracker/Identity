@@ -48,7 +48,7 @@ namespace IdentityServer
                 .AddInMemoryClients(Config.Clients)
                 .AddProfileService<GoogleProfileService>()
                 .AddDelegationGrant<TripTreckerUser, String>()   // Register the extension grant 
-                .AddDefaultSocialLoginValidators(); // Add google, facebook, twitter login support
+                .AddDefaultSocialLoginValidators();
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();

@@ -97,12 +97,12 @@ namespace IdentityServer
                     ClientId = ServerClients.ANGULAR,
                     AllowedGrantTypes = new[] { "delegation" },
                     RequireClientSecret = false,
-
                     RedirectUris = { "https://localhost:8080/callback" },
                     PostLogoutRedirectUris = { "https://localhost:8080/index.html" },
                     AllowedCorsOrigins = { "https://localhost:8080" },
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AlwaysSendClientClaims = true,
+                    AllowOfflineAccess = true, // allows refresh tokens
                     AccessTokenType = AccessTokenType.Jwt,
 
                     // scopes that client has access to
