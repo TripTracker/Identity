@@ -3,6 +3,8 @@
 
 
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -55,8 +57,22 @@ namespace IdentityServer
                 {
                     var port = Environment.GetEnvironmentVariable("PORT");
 
-                    webBuilder.UseStartup<Startup>()
+                    webBuilder.ConfigureAppConfiguration(config =>
+                    {
+                        var settings = config.Build();
+                        config.AddAzureAppConfiguration(options =>
+                        {
+                                    // TO DO: SET AS PART OF DEPLOYMENT
+                                    var connectionString = "Endpoint=https://ttconfig.azconfig.io;Id=pY2l-l2-s0:/OB2XaoBOJkaIJJ2XvlF;Secret=WnfjDwyJtWCNuAgsAwgcR9lnRQPA00srJg4X1f9LkAg=";
+                            options.Connect(connectionString)
+                            // Load configuration values with no label
+                            .Select(KeyFilter.Any, LabelFilter.Null)
+                            // Override with any configuration values specific to current hosting env
+                            .Select(KeyFilter.Any, "dev"); // TO DO: SET AS PART OF DEPLOYMENT
+                        });
+                    })
+                    .UseStartup<Startup>()
                     .UseUrls("http://*:" + port);
-                });
+        });
     }
 }
